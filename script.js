@@ -1,4 +1,5 @@
 const MODE_SEQUENCE = ["pair", "upper", "lower"];
+const BACKGROUND_SEQUENCE = ["default", "sepia", "paper"];
 
 const ITEMS = [
   { letter: "A", word: "apple" },
@@ -35,6 +36,9 @@ const caption = document.getElementById("caption");
 const choices = document.getElementById("choices");
 const modeToggle = document.getElementById("modeToggle");
 const soundToggle = document.getElementById("soundToggle");
+const backgroundToggle = document.getElementById("backgroundToggle");
+const menuToggle = document.getElementById("menuToggle");
+const optionsMenu = document.getElementById("optionsMenu");
 
 const state = {
   order: [],
@@ -44,6 +48,8 @@ const state = {
   current: null,
   soundEnabled: true,
   voice: null,
+  background: "default",
+  menuOpen: false,
 };
 
 function shuffle(array) {
@@ -245,13 +251,46 @@ function toggleSound() {
   }
 }
 
+function applyBackground() {
+  document.body.dataset.background = state.background;
+  if (backgroundToggle) {
+    backgroundToggle.dataset.mode = state.background;
+    backgroundToggle.setAttribute("aria-label", `Background: ${state.background}`);
+  }
+}
+
+function cycleBackground() {
+  const currentIndex = BACKGROUND_SEQUENCE.indexOf(state.background);
+  const next = BACKGROUND_SEQUENCE[(currentIndex + 1) % BACKGROUND_SEQUENCE.length];
+  state.background = next;
+  applyBackground();
+}
+
+function applyMenuState() {
+  if (!menuToggle || !optionsMenu) return;
+  const isOpen = state.menuOpen;
+  menuToggle.setAttribute("aria-expanded", String(isOpen));
+  menuToggle.setAttribute("aria-label", isOpen ? "Hide options" : "Show options");
+  optionsMenu.setAttribute("aria-hidden", String(!isOpen));
+  menuToggle.closest(".controls")?.classList.toggle("is-open", isOpen);
+}
+
+function toggleMenu() {
+  state.menuOpen = !state.menuOpen;
+  applyMenuState();
+}
+
 choices.addEventListener("click", handleChoice);
 modeToggle.addEventListener("click", cycleMode);
 soundToggle.addEventListener("click", toggleSound);
+if (backgroundToggle) backgroundToggle.addEventListener("click", cycleBackground);
+if (menuToggle) menuToggle.addEventListener("click", toggleMenu);
 
 if ("speechSynthesis" in window) {
   ensureVoice();
   window.speechSynthesis.addEventListener("voiceschanged", ensureVoice);
 }
 
+applyBackground();
+applyMenuState();
 nextRound();

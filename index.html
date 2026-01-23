@@ -18,22 +18,44 @@
       </section>
 
       <div class="controls" aria-label="Display options">
-        <button class="control-button sound-toggle" id="soundToggle" type="button" aria-label="Sound on" aria-pressed="false">
-          <span class="visually-hidden">Sound on</span>
-          <svg class="sound-on-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-            <path d="M4 10H8L12 6V18L8 14H4Z" />
-            <path d="M15 9C16.5 10.5 16.5 13.5 15 15" />
-            <path d="M18 7C20.5 10 20.5 14 18 17" />
-          </svg>
-          <svg class="sound-off-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-            <path d="M4 10H8L12 6V18L8 14H4Z" />
-            <line x1="16" y1="9" x2="21" y2="15" />
-            <line x1="21" y1="9" x2="16" y2="15" />
+        <button
+          class="control-button menu-toggle"
+          id="menuToggle"
+          type="button"
+          aria-label="Show options"
+          aria-expanded="false"
+          aria-controls="optionsMenu"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M14.5 6.5A4 4 0 0 0 9 11l-5 5 3 3 5-5a4 4 0 0 0 5.5-5.5L14 10l.5-3.5Z" />
+            <path d="M6 20l-2-2" />
           </svg>
         </button>
-        <button class="control-button mode-toggle" id="modeToggle" type="button" aria-label="Switch letter mode">
-          Aa
-        </button>
+
+        <div class="options-menu" id="optionsMenu" aria-hidden="true">
+          <button class="control-button sound-toggle" id="soundToggle" type="button" aria-label="Sound on" aria-pressed="false">
+            <span class="visually-hidden">Sound on</span>
+            <svg class="sound-on-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path d="M4 10H8L12 6V18L8 14H4Z" />
+              <path d="M15 9C16.5 10.5 16.5 13.5 15 15" />
+              <path d="M18 7C20.5 10 20.5 14 18 17" />
+            </svg>
+            <svg class="sound-off-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path d="M4 10H8L12 6V18L8 14H4Z" />
+              <line x1="16" y1="9" x2="21" y2="15" />
+              <line x1="21" y1="9" x2="16" y2="15" />
+            </svg>
+          </button>
+          <button class="control-button mode-toggle" id="modeToggle" type="button" aria-label="Switch letter mode">
+            Aa
+          </button>
+          <button
+            class="control-button background-toggle"
+            id="backgroundToggle"
+            type="button"
+            aria-label="Background: default"
+          ></button>
+        </div>
       </div>
     </main>
 
