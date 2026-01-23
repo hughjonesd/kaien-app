@@ -146,7 +146,7 @@ body[data-background="paper"] {
 
 .choices button.faded {
   opacity: 0;
-  transform: translateY(10px) scale(0.96);
+  transform: none;
   pointer-events: none;
 }
 
