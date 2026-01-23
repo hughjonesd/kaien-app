@@ -103,7 +103,10 @@ function pickBestVoice(voices) {
     let score = 0;
 
     if (lang.startsWith("en")) score += 3;
-    if (lang.startsWith("en-us")) score += 2;
+    if (lang.startsWith("en-gb")) score += 3;
+    if (lang.startsWith("en-au")) score += 2;
+    if (lang.startsWith("en-nz")) score += 2;
+    if (lang.startsWith("en-ie")) score += 2;
     if (voice.localService) score += 1;
 
     const preferredIndex = preferredNames.findIndex((pref) => pref.toLowerCase() === name.toLowerCase());
@@ -170,7 +173,7 @@ function speakCurrent() {
 
   const spokenLetter =
     state.mode === "lower" ? state.current.letter.toLowerCase() : state.current.letter.toUpperCase();
-  const phrase = `${spokenLetter} for ${state.current.word}`;
+  const phrase = `${spokenLetter}, for ${state.current.word}`;
   const utterance = new SpeechSynthesisUtterance(phrase);
   utterance.rate = 0.9;
   utterance.pitch = 1.0;
