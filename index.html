@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Alphabet Sketchbook</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="app" aria-live="polite">
+      <section class="layout">
+        <figure class="illustration" id="card">
+          <div class="picture" id="picture" role="img" aria-label=""></div>
+          <figcaption class="caption" id="caption" aria-live="polite"></figcaption>
+        </figure>
+
+        <ul class="choices" id="choices" aria-label="Letter choices"></ul>
+      </section>
+
+      <div class="controls" aria-label="Display options">
+        <button class="control-button sound-toggle" id="soundToggle" type="button" aria-label="Sound on" aria-pressed="false">
+          <span class="visually-hidden">Sound on</span>
+          <svg class="sound-on-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M4 10H8L12 6V18L8 14H4Z" />
+            <path d="M15 9C16.5 10.5 16.5 13.5 15 15" />
+            <path d="M18 7C20.5 10 20.5 14 18 17" />
+          </svg>
+          <svg class="sound-off-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M4 10H8L12 6V18L8 14H4Z" />
+            <line x1="16" y1="9" x2="21" y2="15" />
+            <line x1="21" y1="9" x2="16" y2="15" />
+          </svg>
+        </button>
+        <button class="control-button mode-toggle" id="modeToggle" type="button" aria-label="Switch letter mode">
+          Aa
+        </button>
+      </div>
+    </main>
+
+    <script src="script.js"></script>
+  </body>
+</html>
