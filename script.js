@@ -43,6 +43,7 @@ const state = {
   solved: false,
   current: null,
   soundEnabled: true,
+  voice: null,
 };
 
 function shuffle(array) {
@@ -72,6 +73,55 @@ function titleCase(word) {
 function getCaption(word) {
   if (state.mode === "lower") return word.toLowerCase();
   return titleCase(word);
+}
+
+function pickBestVoice(voices) {
+  if (!voices || voices.length === 0) return null;
+  const preferredNames = [
+    "Samantha",
+    "Victoria",
+    "Karen",
+    "Serena",
+    "Kate",
+    "Moira",
+    "Tessa",
+    "Daniel",
+    "Google US English",
+    "Google UK English Female",
+    "Google UK English Male",
+    "Microsoft Aria Online",
+    "Microsoft Jenny Online",
+    "Microsoft Guy Online",
+    "Microsoft Zira",
+    "Microsoft David",
+  ];
+
+  const ranked = [];
+  for (const voice of voices) {
+    const name = voice.name || "";
+    const lang = (voice.lang || "").toLowerCase();
+    let score = 0;
+
+    if (lang.startsWith("en")) score += 3;
+    if (lang.startsWith("en-us")) score += 2;
+    if (voice.localService) score += 1;
+
+    const preferredIndex = preferredNames.findIndex((pref) => pref.toLowerCase() === name.toLowerCase());
+    if (preferredIndex !== -1) score += 20 - preferredIndex;
+
+    if (name.toLowerCase().includes("natural")) score += 3;
+    if (name.toLowerCase().includes("neural")) score += 2;
+
+    ranked.push({ voice, score });
+  }
+
+  ranked.sort((a, b) => b.score - a.score);
+  return ranked[0]?.voice || null;
+}
+
+function ensureVoice() {
+  const voices = window.speechSynthesis.getVoices();
+  state.voice = pickBestVoice(voices);
 }
 
 function pickChoices(correctLetter) {
@@ -116,13 +166,16 @@ function speakCurrent() {
   if (!state.soundEnabled || !state.current) return;
   if (!("speechSynthesis" in window)) return;
 
+  if (!state.voice) ensureVoice();
+
   const spokenLetter =
     state.mode === "lower" ? state.current.letter.toLowerCase() : state.current.letter.toUpperCase();
   const phrase = `${spokenLetter} for ${state.current.word}`;
   const utterance = new SpeechSynthesisUtterance(phrase);
-  utterance.rate = 0.8;
+  utterance.rate = 0.9;
   utterance.pitch = 1.0;
   utterance.volume = 1.0;
+  if (state.voice) utterance.voice = state.voice;
   window.speechSynthesis.cancel();
   window.speechSynthesis.speak(utterance);
 }
@@ -192,5 +245,10 @@ function toggleSound() {
 choices.addEventListener("click", handleChoice);
 modeToggle.addEventListener("click", cycleMode);
 soundToggle.addEventListener("click", toggleSound);
+
+if ("speechSynthesis" in window) {
+  ensureVoice();
+  window.speechSynthesis.addEventListener("voiceschanged", ensureVoice);
+}
 
 nextRound();
