@@ -324,6 +324,10 @@ body[data-background="paper"] {
     gap: 10px;
   }
 
+  .choices {
+    gap: 12px;
+  }
+
   .caption {
     font-size: clamp(2.4rem, 2.6vw + 1.75rem, 3.4rem);
   }
