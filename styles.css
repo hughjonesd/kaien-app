@@ -118,6 +118,10 @@ body[data-background="paper"] {
   font-family: "Lora", "Cormorant Garamond", serif;
   font-size: clamp(3.4rem, 5.3vw + 1.2rem, 5.4rem);
   padding: 20px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
   cursor: pointer;
   transition:
     transform 2s ease,
@@ -338,5 +342,15 @@ body[data-background="paper"] {
 
   .choices {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 420px) {
+  .layout {
+    gap: 12px;
+  }
+
+  .illustration {
+    gap: 8px;
   }
 }
