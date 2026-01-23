@@ -120,7 +120,7 @@ body {
     color 2s ease,
     -webkit-text-stroke 2s ease,
     box-shadow 2s ease;
-  box-shadow: 0 14px 24px rgba(90, 74, 58, 0.15);
+  box-shadow: none;
 }
 
 .choices button:hover {
@@ -130,7 +130,7 @@ body {
 .choices button.correct {
   color: var(--accent);
   -webkit-text-stroke: 0;
-  box-shadow: 0 16px 28px rgba(143, 58, 47, 0.2);
+  box-shadow: none;
 }
 
 .choices button.faded {
