@@ -23,7 +23,7 @@ const ITEMS = [
   { letter: "T", word: "toad" },
   { letter: "U", word: "umbrella" },
   { letter: "V", word: "van" },
-  { letter: "W", word: "wheel" },
+  { letter: "W", word: "well" },
   { letter: "X", word: "xylophone" },
   { letter: "Y", word: "yawn" },
   { letter: "Z", word: "zebra" },
