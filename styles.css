@@ -69,7 +69,6 @@ body {
 }
 
 .illustration.solved .picture {
-  transform: translateY(-4px);
   filter: drop-shadow(0 10px 20px rgba(143, 58, 47, 0.2));
 }
 
@@ -78,13 +77,12 @@ body {
   min-height: 1.6em;
   font-size: clamp(1.4rem, 1.2vw + 1rem, 2rem);
   opacity: 0;
-  transform: translateY(8px);
-  transition: opacity 2s ease, transform 2s ease;
+  transition: opacity 2.6s ease 0s;
 }
 
 .illustration.solved .caption {
   opacity: 1;
-  transform: translateY(0);
+  transition-delay: 1s;
 }
 
 .caption .hit {
@@ -218,6 +216,10 @@ body {
     align-items: center;
   }
 
+  .caption {
+    font-size: clamp(1.8rem, 1.6vw + 1.2rem, 2.6rem);
+  }
+
   .choices {
     grid-template-columns: 1fr;
     width: min(380px, 40vw);
@@ -226,6 +228,7 @@ body {
   .choices button {
     max-width: 300px;
     justify-self: start;
+    font-size: clamp(4.4rem, 6.5vw + 1.2rem, 7rem);
   }
 
   .choices button:nth-child(2) {
@@ -238,6 +241,10 @@ body {
 }
 
 @media (max-width: 600px) {
+  .caption {
+    font-size: clamp(1.9rem, 2.6vw + 1.4rem, 2.7rem);
+  }
+
   .choices {
     grid-template-columns: 1fr;
   }
