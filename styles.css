@@ -325,7 +325,11 @@ body[data-background="paper"] {
   }
 
   .choices {
-    gap: 12px;
+    gap: 8px;
+  }
+
+  .choices button {
+    padding: 14px 10px;
   }
 
   .caption {
