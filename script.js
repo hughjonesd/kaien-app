@@ -67,6 +67,10 @@ function formatLetter(letter, mode) {
   return `${letter.toUpperCase()}${letter.toLowerCase()}`;
 }
 
+function formatLetterMarkup(letter) {
+  return `<span class="letter-pair"><span class="letter-upper">${letter.toUpperCase()}</span><span class="letter-lower">${letter.toLowerCase()}</span></span>`;
+}
+
 function highlightCaption(text, letter) {
   const regex = new RegExp(letter, "gi");
   return text.replace(regex, (match) => `<span class="hit">${match}</span>`);
@@ -146,8 +150,13 @@ function renderChoices(letters) {
     const button = document.createElement("button");
     button.type = "button";
     button.dataset.letter = letter;
-    button.textContent = formatLetter(letter, state.mode);
-    button.setAttribute("aria-label", `Letter ${formatLetter(letter, state.mode)}`);
+    const label = formatLetter(letter, state.mode);
+    if (state.mode === "pair") {
+      button.innerHTML = formatLetterMarkup(letter);
+    } else {
+      button.textContent = label;
+    }
+    button.setAttribute("aria-label", `Letter ${label}`);
     choices.appendChild(button);
   });
 
