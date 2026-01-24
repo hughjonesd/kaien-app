@@ -1,0 +1,26 @@
+{
+  "name": "kaien-app",
+  "version": "1.0.0",
+  "description": "",
+  "main": "script.js",
+  "scripts": {
+    "copy:web": "rm -rf web && mkdir web && cp -R index.html styles.css script.js images web/",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hughjonesd/kaien-app.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/hughjonesd/kaien-app/issues"
+  },
+  "homepage": "https://github.com/hughjonesd/kaien-app#readme",
+  "dependencies": {
+    "@capacitor/cli": "^8.0.1",
+    "@capacitor/core": "^8.0.1",
+    "@capacitor/ios": "^8.0.1"
+  }
+}
