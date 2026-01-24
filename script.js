@@ -85,8 +85,20 @@ function getCaption(word) {
   return titleCase(word);
 }
 
+function getPreferredLocales() {
+  if (typeof navigator === "undefined") return ["en-us"];
+  const raw = (navigator.language || "").toLowerCase();
+  if (raw.startsWith("en-gb")) return ["en-gb", "en"];
+  if (raw.startsWith("en-au")) return ["en-au", "en"];
+  if (raw.startsWith("en-nz")) return ["en-nz", "en"];
+  if (raw.startsWith("en-ie")) return ["en-ie", "en"];
+  if (raw.startsWith("en")) return ["en-us", "en"];
+  return ["en-us", "en"];
+}
+
 function pickBestVoice(voices) {
   if (!voices || voices.length === 0) return null;
+  const preferredLocales = getPreferredLocales();
   const preferredNames = [
     "Samantha",
     "Victoria",
@@ -112,11 +124,9 @@ function pickBestVoice(voices) {
     const lang = (voice.lang || "").toLowerCase();
     let score = 0;
 
-    if (lang.startsWith("en")) score += 3;
-    if (lang.startsWith("en-gb")) score += 3;
-    if (lang.startsWith("en-au")) score += 2;
-    if (lang.startsWith("en-nz")) score += 2;
-    if (lang.startsWith("en-ie")) score += 2;
+    const localeIndex = preferredLocales.findIndex((locale) => lang.startsWith(locale));
+    if (localeIndex !== -1) score += 10 - localeIndex;
+    if (lang.startsWith("en")) score += 2;
     if (voice.localService) score += 1;
 
     const preferredIndex = preferredNames.findIndex((pref) => pref.toLowerCase() === name.toLowerCase());
