@@ -231,7 +231,7 @@ function handleChoice(event) {
 
   window.setTimeout(() => {
     nextRound();
-  }, 3000);
+  }, 5000);
 }
 
 function cycleMode() {
