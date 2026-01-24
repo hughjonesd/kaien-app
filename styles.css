@@ -361,12 +361,29 @@ body[data-background="paper"] {
   }
 }
 
-@media (max-width: 420px) {
+@media (max-width: 380px) {
   .layout {
-    gap: 12px;
+    gap: 8px;
   }
 
   .illustration {
-    gap: 8px;
+    gap: 6px;
+  }
+
+  .picture {
+    width: min(260px, 62vw);
+  }
+
+  .caption {
+    min-height: 1.2em;
+  }
+
+  .choices {
+    gap: 4px;
+  }
+
+  .choices button {
+    padding: 10px 8px;
+    line-height: 1;
   }
 }
