@@ -198,6 +198,19 @@ function speakCurrent() {
   window.speechSynthesis.speak(utterance);
 }
 
+function speakWordOnly(word) {
+  if (!state.soundEnabled || !word) return;
+  if (!("speechSynthesis" in window)) return;
+  if (!state.voice) ensureVoice();
+  const utterance = new SpeechSynthesisUtterance(word);
+  utterance.rate = 0.9;
+  utterance.pitch = 1.0;
+  utterance.volume = 1.0;
+  if (state.voice) utterance.voice = state.voice;
+  window.speechSynthesis.cancel();
+  window.speechSynthesis.speak(utterance);
+}
+
 function nextRound() {
   if (state.order.length === 0 || state.index >= state.order.length) {
     state.order = shuffle(ITEMS.map((item) => item.letter));
@@ -294,6 +307,7 @@ modeToggle.addEventListener("click", cycleMode);
 soundToggle.addEventListener("click", toggleSound);
 if (backgroundToggle) backgroundToggle.addEventListener("click", cycleBackground);
 if (menuToggle) menuToggle.addEventListener("click", toggleMenu);
+if (picture) picture.addEventListener("click", () => speakWordOnly(state.current?.word));
 
 if ("speechSynthesis" in window) {
   ensureVoice();
