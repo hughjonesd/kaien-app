@@ -104,6 +104,15 @@ function getAudio(letter, word) {
   return audio;
 }
 
+function preloadAudio() {
+  ITEMS.forEach((item) => {
+    const audio = getAudio(item.letter, item.word);
+    if (typeof audio.load === "function") {
+      audio.load();
+    }
+  });
+}
+
 function stopAudio() {
   if (!currentAudio) return;
   currentAudio.pause();
@@ -277,4 +286,5 @@ if (picture) picture.addEventListener("click", () => playWordOnly(state.current?
 
 applyBackground();
 applyMenuState();
+preloadAudio();
 nextRound();
