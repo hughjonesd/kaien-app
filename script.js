@@ -40,6 +40,9 @@ const backgroundToggle = document.getElementById("backgroundToggle");
 const menuToggle = document.getElementById("menuToggle");
 const optionsMenu = document.getElementById("optionsMenu");
 
+const audioCache = new Map();
+let currentAudio = null;
+
 const state = {
   order: [],
   index: 0,
@@ -85,66 +88,42 @@ function getCaption(word) {
   return titleCase(word);
 }
 
-function getPreferredLocales() {
-  if (typeof navigator === "undefined") return ["en-us"];
-  const raw = (navigator.language || "").toLowerCase();
-  if (raw.startsWith("en-gb")) return ["en-gb", "en"];
-  if (raw.startsWith("en-au")) return ["en-au", "en"];
-  if (raw.startsWith("en-nz")) return ["en-nz", "en"];
-  if (raw.startsWith("en-ie")) return ["en-ie", "en"];
-  if (raw.startsWith("en")) return ["en-us", "en"];
-  return ["en-us", "en"];
+function buildAudioSrc(letter, word) {
+  return `sound/${encodeURIComponent(letter)}-${encodeURIComponent(word)}.mp3`;
 }
 
-function pickBestVoice(voices) {
-  if (!voices || voices.length === 0) return null;
-  const preferredLocales = getPreferredLocales();
-  const preferredNames = [
-    "Samantha",
-    "Victoria",
-    "Karen",
-    "Serena",
-    "Kate",
-    "Moira",
-    "Tessa",
-    "Daniel",
-    "Google US English",
-    "Google UK English Female",
-    "Google UK English Male",
-    "Microsoft Aria Online",
-    "Microsoft Jenny Online",
-    "Microsoft Guy Online",
-    "Microsoft Zira",
-    "Microsoft David",
-  ];
+function getAudio(letter, word) {
+  const key = `${letter}-${word}`;
+  if (audioCache.has(key)) return audioCache.get(key);
+  const audio = new Audio(buildAudioSrc(letter, word));
+  audio.preload = "auto";
+  audio.addEventListener("ended", () => {
+    if (currentAudio === audio) currentAudio = null;
+  });
+  audioCache.set(key, audio);
+  return audio;
+}
 
-  const ranked = [];
-  for (const voice of voices) {
-    const name = voice.name || "";
-    const lang = (voice.lang || "").toLowerCase();
-    let score = 0;
+function stopAudio() {
+  if (!currentAudio) return;
+  currentAudio.pause();
+  currentAudio.currentTime = 0;
+  currentAudio = null;
+}
 
-    const localeIndex = preferredLocales.findIndex((locale) => lang.startsWith(locale));
-    if (localeIndex !== -1) score += 10 - localeIndex;
-    if (lang.startsWith("en")) score += 2;
-    if (voice.localService) score += 1;
-
-    const preferredIndex = preferredNames.findIndex((pref) => pref.toLowerCase() === name.toLowerCase());
-    if (preferredIndex !== -1) score += 20 - preferredIndex;
-
-    if (name.toLowerCase().includes("natural")) score += 3;
-    if (name.toLowerCase().includes("neural")) score += 2;
-
-    ranked.push({ voice, score });
+function playAudio(letter, word) {
+  if (!state.soundEnabled || !letter || !word) return;
+  const audio = getAudio(letter, word);
+  if (currentAudio && currentAudio !== audio) {
+    currentAudio.pause();
+    currentAudio.currentTime = 0;
   }
-
-  ranked.sort((a, b) => b.score - a.score);
-  return ranked[0]?.voice || null;
-}
-
-function ensureVoice() {
-  const voices = window.speechSynthesis.getVoices();
-  state.voice = pickBestVoice(voices);
+  currentAudio = audio;
+  audio.currentTime = 0;
+  const playAttempt = audio.play();
+  if (playAttempt && typeof playAttempt.catch === "function") {
+    playAttempt.catch(() => {});
+  }
 }
 
 function pickChoices(correctLetter) {
@@ -190,35 +169,14 @@ function renderCard() {
   }
 }
 
-function speakCurrent() {
-  if (!state.soundEnabled || !state.current) return;
-  if (!("speechSynthesis" in window)) return;
-
-  if (!state.voice) ensureVoice();
-
-  const spokenLetter =
-    state.mode === "lower" ? state.current.letter.toLowerCase() : state.current.letter.toUpperCase();
-  const phrase = `${spokenLetter}, for ${state.current.word}`;
-  const utterance = new SpeechSynthesisUtterance(phrase);
-  utterance.rate = 0.9;
-  utterance.pitch = 1.0;
-  utterance.volume = 1.0;
-  if (state.voice) utterance.voice = state.voice;
-  window.speechSynthesis.cancel();
-  window.speechSynthesis.speak(utterance);
+function playCurrent() {
+  if (!state.current) return;
+  playAudio(state.current.letter, state.current.word);
 }
 
-function speakWordOnly(word) {
-  if (!state.soundEnabled || !word) return;
-  if (!("speechSynthesis" in window)) return;
-  if (!state.voice) ensureVoice();
-  const utterance = new SpeechSynthesisUtterance(word);
-  utterance.rate = 0.9;
-  utterance.pitch = 1.0;
-  utterance.volume = 1.0;
-  if (state.voice) utterance.voice = state.voice;
-  window.speechSynthesis.cancel();
-  window.speechSynthesis.speak(utterance);
+function playWordOnly(word) {
+  if (!state.current || !word) return;
+  playAudio(state.current.letter, word);
 }
 
 function nextRound() {
@@ -250,7 +208,7 @@ function handleChoice(event) {
   state.solved = true;
   button.classList.add("correct");
   renderCard();
-  speakCurrent();
+  playCurrent();
 
   window.setTimeout(() => {
     nextRound();
@@ -278,9 +236,7 @@ function toggleSound() {
   soundToggle.setAttribute("aria-label", state.soundEnabled ? "Sound on" : "Sound off");
   soundToggle.setAttribute("aria-pressed", String(!state.soundEnabled));
   soundToggle.classList.toggle("is-off", !state.soundEnabled);
-  if (!state.soundEnabled && "speechSynthesis" in window) {
-    window.speechSynthesis.cancel();
-  }
+  if (!state.soundEnabled) stopAudio();
 }
 
 function applyBackground() {
@@ -317,12 +273,7 @@ modeToggle.addEventListener("click", cycleMode);
 soundToggle.addEventListener("click", toggleSound);
 if (backgroundToggle) backgroundToggle.addEventListener("click", cycleBackground);
 if (menuToggle) menuToggle.addEventListener("click", toggleMenu);
-if (picture) picture.addEventListener("click", () => speakWordOnly(state.current?.word));
-
-if ("speechSynthesis" in window) {
-  ensureVoice();
-  window.speechSynthesis.addEventListener("voiceschanged", ensureVoice);
-}
+if (picture) picture.addEventListener("click", () => playWordOnly(state.current?.word));
 
 applyBackground();
 applyMenuState();

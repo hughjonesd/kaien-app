@@ -4,7 +4,7 @@
   "description": "",
   "main": "script.js",
   "scripts": {
-    "copy:web": "rm -rf web && mkdir web && cp -R index.html styles.css script.js images web/",
+    "copy:web": "rm -rf web && mkdir web && cp -R index.html styles.css script.js images sound web/",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
