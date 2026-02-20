@@ -2,3 +2,4 @@
 node_modules/
 web/
 .venv/
+ios/App/App.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/
