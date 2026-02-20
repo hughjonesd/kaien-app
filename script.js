@@ -34,6 +34,7 @@ const card = document.getElementById("card");
 const picture = document.getElementById("picture");
 const caption = document.getElementById("caption");
 const choices = document.getElementById("choices");
+const appRoot = document.querySelector(".app");
 const modeToggle = document.getElementById("modeToggle");
 const soundToggle = document.getElementById("soundToggle");
 const backgroundToggle = document.getElementById("backgroundToggle");
@@ -42,6 +43,7 @@ const optionsMenu = document.getElementById("optionsMenu");
 
 const audioCache = new Map();
 let currentAudio = null;
+let debugOverlay = null;
 
 const state = {
   order: [],
@@ -162,6 +164,8 @@ function renderChoices(letters) {
     const correct = choices.querySelector(`[data-letter=\"${state.current.letter}\"]`);
     if (correct) correct.classList.add("correct");
   }
+
+  updateDebugOverlay();
 }
 
 function renderCard() {
@@ -176,6 +180,8 @@ function renderCard() {
   } else {
     caption.textContent = "";
   }
+
+  updateDebugOverlay();
 }
 
 function playCurrent() {
@@ -275,6 +281,56 @@ function applyMenuState() {
 function toggleMenu() {
   state.menuOpen = !state.menuOpen;
   applyMenuState();
+  updateDebugOverlay();
+}
+
+function formatRect(rect) {
+  if (!rect) return "n/a";
+  return `${Math.round(rect.width)}x${Math.round(rect.height)} @ ${Math.round(rect.left)},${Math.round(
+    rect.top
+  )}`;
+}
+
+function updateDebugOverlay() {
+  if (!debugOverlay) return;
+  const appRect = appRoot?.getBoundingClientRect();
+  const layoutRect = document.querySelector(".layout")?.getBoundingClientRect();
+  const pictureRect = picture?.getBoundingClientRect();
+  const choicesRect = choices?.getBoundingClientRect();
+  const viewport = window.visualViewport;
+  const appStyles = appRoot ? getComputedStyle(appRoot) : null;
+  const pad = appStyles
+    ? `t ${appStyles.paddingTop} r ${appStyles.paddingRight} b ${appStyles.paddingBottom} l ${appStyles.paddingLeft}`
+    : "n/a";
+  const lines = [
+    `vw/vh: ${Math.round(window.innerWidth)}x${Math.round(window.innerHeight)}`,
+    viewport
+      ? `visual: ${Math.round(viewport.width)}x${Math.round(viewport.height)} off ${Math.round(
+          viewport.offsetLeft
+        )},${Math.round(viewport.offsetTop)} scale ${viewport.scale?.toFixed(2) ?? "n/a"}`
+      : "visual: n/a",
+    `dpr: ${window.devicePixelRatio}`,
+    `app pad: ${pad}`,
+    `app: ${formatRect(appRect)}`,
+    `layout: ${formatRect(layoutRect)}`,
+    `picture: ${formatRect(pictureRect)}`,
+    `choices: ${formatRect(choicesRect)}`,
+  ];
+  debugOverlay.textContent = lines.join("\n");
+}
+
+function initDebugOverlay() {
+  debugOverlay = document.createElement("pre");
+  debugOverlay.className = "debug-overlay is-hidden";
+  debugOverlay.setAttribute("aria-hidden", "true");
+  document.body.appendChild(debugOverlay);
+  updateDebugOverlay();
+
+  window.addEventListener("resize", updateDebugOverlay);
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener("resize", updateDebugOverlay);
+    window.visualViewport.addEventListener("scroll", updateDebugOverlay);
+  }
 }
 
 choices.addEventListener("click", handleChoice);
@@ -286,5 +342,6 @@ if (picture) picture.addEventListener("click", () => playWordOnly(state.current?
 
 applyBackground();
 applyMenuState();
+initDebugOverlay();
 preloadAudio();
 nextRound();
