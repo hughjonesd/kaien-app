@@ -5,7 +5,8 @@
   --paper-deep: #e9d19a;
   --paper-shadow: #d7c28f;
   --ink: #5f5b57;
-  --ink-button: #77726e;
+  --ink-button: rgba(119, 114, 110, 0.78);
+  --ink-button-fill: rgba(95, 91, 87, 0.22);
   --ink-soft: rgba(95, 91, 87, 0.35);
   --border-soft: rgba(95, 91, 87, 0.45);
   --accent: #b0614c;
@@ -136,7 +137,7 @@ body[data-background="paper"] {
   border: none;
   border-radius: 14px;
   background: transparent;
-  color: transparent;
+  color: var(--ink-button-fill);
   -webkit-text-stroke: 2px;
   -webkit-text-stroke-color: var(--ink-button);
   font-family: "Lora", "Cormorant Garamond", serif;
@@ -223,7 +224,7 @@ body[data-background="paper"] {
   height: 44px;
   padding: 0;
   border-radius: 50%;
-  border: 2px solid var(--ink);
+  border: 2px solid var(--ink-button);
   display: grid;
   place-items: center;
 }
@@ -231,7 +232,7 @@ body[data-background="paper"] {
 .menu-toggle svg {
   width: 22px;
   height: 22px;
-  stroke: var(--ink);
+  stroke: var(--ink-button);
   stroke-width: 2;
   fill: none;
   stroke-linecap: round;
