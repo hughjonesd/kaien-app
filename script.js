@@ -44,6 +44,7 @@ const optionsMenu = document.getElementById("optionsMenu");
 const audioCache = new Map();
 let currentAudio = null;
 let debugOverlay = null;
+let suppressNextMenuClick = false;
 
 const state = {
   order: [],
@@ -333,15 +334,54 @@ function initDebugOverlay() {
   }
 }
 
+function toggleDebugOverlay() {
+  if (!debugOverlay) return;
+  debugOverlay.classList.toggle("is-hidden");
+  document.body.classList.toggle("debug-mode", !debugOverlay.classList.contains("is-hidden"));
+  updateDebugOverlay();
+}
+
+function bindDebugLongPress() {
+  if (!menuToggle) return;
+
+  let timerId = null;
+
+  const clearTimer = () => {
+    if (timerId) window.clearTimeout(timerId);
+    timerId = null;
+  };
+
+  menuToggle.addEventListener("pointerdown", () => {
+    clearTimer();
+    timerId = window.setTimeout(() => {
+      suppressNextMenuClick = true;
+      toggleDebugOverlay();
+    }, 700);
+  });
+
+  menuToggle.addEventListener("pointerup", clearTimer);
+  menuToggle.addEventListener("pointercancel", clearTimer);
+  menuToggle.addEventListener("pointerleave", clearTimer);
+}
+
+function handleMenuToggleClick() {
+  if (suppressNextMenuClick) {
+    suppressNextMenuClick = false;
+    return;
+  }
+  toggleMenu();
+}
+
 choices.addEventListener("click", handleChoice);
 modeToggle.addEventListener("click", cycleMode);
 soundToggle.addEventListener("click", toggleSound);
 if (backgroundToggle) backgroundToggle.addEventListener("click", cycleBackground);
-if (menuToggle) menuToggle.addEventListener("click", toggleMenu);
+if (menuToggle) menuToggle.addEventListener("click", handleMenuToggleClick);
 if (picture) picture.addEventListener("click", () => playWordOnly(state.current?.word));
 
 applyBackground();
 applyMenuState();
 initDebugOverlay();
+bindDebugLongPress();
 preloadAudio();
 nextRound();
