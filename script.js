@@ -382,6 +382,5 @@ if (picture) picture.addEventListener("click", () => playWordOnly(state.current?
 applyBackground();
 applyMenuState();
 initDebugOverlay();
-bindDebugLongPress();
 preloadAudio();
 nextRound();
